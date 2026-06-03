@@ -1,0 +1,4 @@
+.alert-bar { background: rgba(226,75,74,0.06); border-bottom: 1px solid rgba(226,75,74,0.2); padding: 9px 5%; display: flex; align-items: center; gap: 12px; overflow: hidden; }
+.ticker-wrap { overflow: hidden; flex: 1; }
+.ticker-text { font-family: var(--font-mono); font-size: 10px; color: rgba(226,75,74,0.8); letter-spacing: 2px; white-space: nowrap; animation: ticker 50s linear infinite; }
+@keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }

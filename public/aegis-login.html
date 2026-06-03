@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEGIS Platform — Connect TikTok</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+  :root {
+    --blue: #44aaff;
+    --blue-dim: rgba(68,170,255,0.15);
+    --blue-glow: rgba(68,170,255,0.4);
+    --bg: #060c16;
+    --bg2: #0a1220;
+    --text: #c8d8e8;
+    --text-dim: #4a6070;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(68,170,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(68,170,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(68,170,255,0.1);
+    background: rgba(6,12,22,0.8);
+    backdrop-filter: blur(10px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-hex {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logo-text h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--blue);
+    line-height: 1;
+  }
+
+  .logo-text p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-top: 2px;
+  }
+
+  .status-bar {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+  }
+
+  .connect-card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--bg2);
+    border: 1px solid rgba(68,170,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .connect-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  }
+
+  .card-header {
+    padding: 32px 40px 24px;
+    border-bottom: 1px solid rgba(68,170,255,0.08);
+  }
+
+  .card-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--blue);
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+  }
+
+  .card-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  .card-subtitle {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .card-body {
+    padding: 32px 40px;
+  }
+
+  .permission-list {
+    list-style: none;
+    margin-bottom: 32px;
+  }
+
+  .permission-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(68,170,255,0.06);
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .permission-list li:last-child {
+    border-bottom: none;
+  }
+
+  .perm-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .perm-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--blue);
+    margin-bottom: 2px;
+  }
+
+  .perm-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .tiktok-btn {
+    width: 100%;
+    padding: 16px 24px;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tiktok-btn:hover {
+    background: #111;
+    border-color: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+  }
+
+  .tiktok-btn:active {
+    transform: translateY(0);
+  }
+
+  .tiktok-logo {
+    width: 22px;
+    height: 22px;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(68,170,255,0.08);
+  }
+
+  .divider-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  .aegis-btn {
+    width: 100%;
+    padding: 16px 24px;
+    background: var(--blue-dim);
+    border: 1px solid rgba(68,170,255,0.3);
+    border-radius: 4px;
+    color: var(--blue);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.2s;
+  }
+
+  .aegis-btn:hover {
+    background: rgba(68,170,255,0.2);
+    border-color: rgba(68,170,255,0.5);
+  }
+
+  .card-footer {
+    padding: 16px 40px 24px;
+    border-top: 1px solid rgba(68,170,255,0.06);
+  }
+
+  .footer-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .footer-text a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+
+  /* Scan line animation */
+  .scan-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(68,170,255,0.3), transparent);
+    animation: scan 4s linear infinite;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  @keyframes scan {
+    0% { top: 0; opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100vh; opacity: 0; }
+  }
+
+  /* Auth modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(6,12,22,0.9);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid rgba(68,170,255,0.3);
+    border-radius: 4px;
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+  }
+
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  }
+
+  .modal-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .modal-text {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .modal-progress {
+    height: 2px;
+    background: rgba(68,170,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .modal-progress-bar {
+    height: 100%;
+    background: var(--blue);
+    width: 0%;
+    transition: width 2s ease;
+  }
+
+  .modal-close {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 8px 16px;
+  }
+
+  .modal-close:hover { color: var(--blue); }
+</style>
+</head>
+<body>
+
+<div class="scan-overlay"></div>
+
+<header>
+  <div class="logo">
+    <svg class="logo-hex" viewBox="0 0 40 40">
+      <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="none" stroke="#44aaff" stroke-width="1.5"/>
+      <circle cx="20" cy="20" r="8" fill="none" stroke="#44aaff" stroke-width="1"/>
+      <circle cx="20" cy="20" r="2" fill="#44aaff"/>
+      <line x1="20" y1="12" x2="20" y2="15" stroke="#44aaff" stroke-width="1"/>
+      <line x1="20" y1="25" x2="20" y2="28" stroke="#44aaff" stroke-width="1"/>
+      <line x1="12" y1="20" x2="15" y2="20" stroke="#44aaff" stroke-width="1"/>
+      <line x1="25" y1="20" x2="28" y2="20" stroke="#44aaff" stroke-width="1"/>
+    </svg>
+    <div class="logo-text">
+      <h1>AEGIS</h1>
+      <p>AUTONOMOUS DEFENSE v5</p>
+    </div>
+  </div>
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    SYSTEM ONLINE
+  </div>
+</header>
+
+<main>
+  <div class="connect-card">
+    <div class="card-header">
+      <div class="card-label">AUTHENTICATION REQUIRED</div>
+      <h2 class="card-title">Connect Your TikTok Account</h2>
+      <p class="card-subtitle">AEGIS requires TikTok authorization to monitor your live stream and protect you from coordinated harassment.</p>
+    </div>
+
+    <div class="card-body">
+      <ul class="permission-list">
+        <li>
+          <svg class="perm-icon" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" stroke="#44aaff" stroke-width="1"/>
+            <path d="M6 10l3 3 5-5" stroke="#44aaff" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <div class="perm-name">user.info.basic</div>
+            <div class="perm-desc">Read your public profile — display name and avatar</div>
+          </div>
+        </li>
+        <li>
+          <svg class="perm-icon" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" stroke="#44aaff" stroke-width="1"/>
+            <path d="M6 10l3 3 5-5" stroke="#44aaff" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <div class="perm-name">user.info.stats</div>
+            <div class="perm-desc">Read follower and following counts for threat scoring</div>
+          </div>
+        </li>
+        <li>
+          <svg class="perm-icon" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" stroke="#44aaff" stroke-width="1"/>
+            <path d="M6 10l3 3 5-5" stroke="#44aaff" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <div class="perm-name">user.info.profile</div>
+            <div class="perm-desc">Read profile link and verification status</div>
+          </div>
+        </li>
+        <li>
+          <svg class="perm-icon" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" stroke="#44aaff" stroke-width="1"/>
+            <path d="M6 10l3 3 5-5" stroke="#44aaff" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <div class="perm-name">video.list</div>
+            <div class="perm-desc">Read public video list to identify burner accounts</div>
+          </div>
+        </li>
+      </ul>
+
+      <button class="tiktok-btn" onclick="startTikTokAuth()">
+        <svg class="tiktok-logo" viewBox="0 0 24 24" fill="white">
+          <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/>
+        </svg>
+        CONTINUE WITH TIKTOK
+      </button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">OR</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <button class="aegis-btn" onclick="window.location.href='https://aegis-dashboard-three.vercel.app'">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <polygon points="9,1 16,4.5 16,13.5 9,17 2,13.5 2,4.5" stroke="#44aaff" stroke-width="1" fill="none"/>
+          <circle cx="9" cy="9" r="3" stroke="#44aaff" stroke-width="1" fill="none"/>
+          <circle cx="9" cy="9" r="1" fill="#44aaff"/>
+        </svg>
+        OPEN AEGIS DASHBOARD
+      </button>
+    </div>
+
+    <div class="card-footer">
+      <p class="footer-text">
+        AEGIS only reads public data. We never post on your behalf or access private messages.<br>
+        <a href="https://cybergridsolutions.tech/aegis-tos.html">Terms of Service</a> &nbsp;·&nbsp;
+        <a href="https://cybergridsolutions.tech/aegis-privacy.html">Privacy Policy</a>
+      </p>
+    </div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <svg class="modal-icon" viewBox="0 0 60 60" fill="none">
+      <polygon points="30,3 54,16 54,44 30,57 6,44 6,16" stroke="#44aaff" stroke-width="1.5" fill="none"/>
+      <circle cx="30" cy="30" r="12" stroke="#44aaff" stroke-width="1.5" fill="none"/>
+      <circle cx="30" cy="30" r="3" fill="#44aaff"/>
+    </svg>
+    <div class="modal-title">Connecting to TikTok</div>
+    <p class="modal-text">Redirecting to TikTok authorization. Please log in and approve AEGIS Platform access.</p>
+    <div class="modal-progress">
+      <div class="modal-progress-bar" id="progressBar"></div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">CANCEL</button>
+  </div>
+</div>
+
+<script>
+const CLIENT_KEY = 'sbaw4zyp0lcbuejp';
+const REDIRECT_URI = encodeURIComponent('https://cybergridsolutions.tech/aegis-callback.html');
+const SCOPE = encodeURIComponent('user.info.basic,user.info.stats,user.info.profile,video.list');
+
+function startTikTokAuth() {
+  document.getElementById('authModal').classList.add('active');
+  const bar = document.getElementById('progressBar');
+  setTimeout(() => bar.style.width = '60%', 100);
+  setTimeout(() => bar.style.width = '90%', 800);
+
+  setTimeout(() => {
+    const state = Math.random().toString(36).substring(2);
+    const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${CLIENT_KEY}&scope=${SCOPE}&response_type=code&redirect_uri=${REDIRECT_URI}&state=${state}`;
+    window.location.href = authUrl;
+  }, 1500);
+}
+
+function closeModal() {
+  document.getElementById('authModal').classList.remove('active');
+  document.getElementById('progressBar').style.width = '0%';
+}
+</script>
+
+</body>
+</html>

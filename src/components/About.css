@@ -1,0 +1,7 @@
+.about-section { background: var(--bg); }
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.about-card { background: var(--glass); border: 1px solid var(--border); border-radius: 8px; padding: 32px; transition: border-color 0.3s; }
+.about-card:hover { border-color: var(--cyan); }
+.about-icon { font-size: 30px; margin-bottom: 16px; }
+.about-card h4 { font-family: var(--font-tech); font-size: 13px; color: #fff; margin-bottom: 10px; letter-spacing: 1px; }
+.about-card p { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
